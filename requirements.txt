@@ -1,0 +1,13 @@
+# Core Web & API
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.9.0
+
+# Data Processing & Quantitative Backtesting
+pandas>=2.2.0
+numpy>=1.26.0
+yfinance>=0.2.50
+
+# Automation & External Integrations
+playwright>=1.49.0
+requests>=2.32.0

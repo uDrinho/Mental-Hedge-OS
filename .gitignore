@@ -1,0 +1,71 @@
+# Credenciais, Sessoes de Navegador e Configuracoes Locais
+telegram_config.json
+browser_session/
+chrome_profile/
+*.pem
+*.key
+.env
+.env.*
+
+# Ambientes Virtuais e Cache Python
+.venv/
+venv/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Dumps Brutos de Terceiros e Midias (Governanca de Dados / Direitos Autorais)
+tweets_raw.json
+mentalhedgebr_1_ano_tweets.json
+mentalhedgebr_1_ano_tweets.md
+image_transcriptions.json
+images/
+playbook/chunks/
+queue_gapfill.json
+
+# Banco de Dados Local de Execucao (recriado automaticamente pelo paper_trader.py)
+paper_portfolio.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Scripts Auxiliares e Rascunhos de Exploracao Local (nao fazem parte do core)
+scratch_*.json
+*_tabulated.txt
+*_details.txt
+alts_analysis.txt
+evaluated_calls_dump.txt
+macro_mentions.json
+btcd_ethbtc_tweets.json
+calls_evaluation.json
+market_history_processed.csv
+build_part*.py
+make_zip.py
+check_*.py
+classify_*.py
+deep_macro_extract.py
+detect_rotation_lag.py
+dump_btcd.py
+evaluate_calls.py
+extract_*.py
+find_master_tweet.py
+focused_boj.py
+inspect_*.py
+print_eval.py
+quant_cycle_analysis.py
+research_*.py
+rotation_lag_stats.py
+save_transcription.py
+scan_notes*.py
+COMO_RODAR_NO_NOTEBOOK.txt
+*.bat
+
+# Arquivos de Sistema e IDEs
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.log

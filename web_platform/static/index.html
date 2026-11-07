@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mental Hedge — Terminal de Inteligência Macroeconômica & Cripto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg-dark: #0a0d14;
+      --bg-card: #121824;
+      --bg-hover: #1b2333;
+      --border: #232d42;
+      --text-main: #f0f4fc;
+      --text-muted: #8b9bb4;
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --accent-yellow: #f59e0b;
+      --accent-purple: #8b5cf6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background-color: var(--bg-card);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px;
+      flex-shrink: 0;
+    }
+    .logo {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .logo-badge {
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      color: white;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      margin-bottom: 6px;
+    }
+    .nav-item:hover, .nav-item.active {
+      background-color: var(--bg-hover);
+      color: var(--text-main);
+    }
+    .nav-item.active {
+      border-left: 3px solid var(--accent-blue);
+      color: var(--accent-blue);
+    }
+
+    /* Main Container */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 28px 36px;
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .page-title h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+    .page-title p { color: var(--text-muted); font-size: 0.85rem; }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-action {
+      background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-action:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    /* Top Grid Cards */
+    .top-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+    }
+    .stat-card-title {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .stat-card-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-card-sub {
+      font-size: 0.75rem;
+      margin-top: 6px;
+      color: var(--text-muted);
+    }
+
+    /* Termômetro de Ciclo */
+    .cycle-tracker {
+      background: linear-gradient(180deg, #162032 0%, var(--bg-card) 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+    .cycle-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .cycle-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .cycle-step {
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      position: relative;
+    }
+    .cycle-step.current {
+      border-color: var(--accent-blue);
+      background: rgba(59, 130, 246, 0.08);
+    }
+    .step-num {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .step-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .step-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* Radar de Teses: 3 Colunas Kanban */
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .kanban-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .kanban-col {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      height: 480px;
+    }
+    .kanban-header {
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .kanban-body {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .thesis-card {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .thesis-card:hover {
+      border-color: var(--accent-blue);
+      transform: translateY(-2px);
+    }
+    .thesis-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .thesis-asset {
+      font-weight: 700;
+      font-size: 0.85rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .tag {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .tag-long { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+    .tag-short { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+    .tag-caixa { background: rgba(245, 158, 11, 0.15); color: var(--accent-yellow); }
+    .thesis-text {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    /* Tabelas e Cartões de Paper Trading */
+    .table-container {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+    th {
+      background-color: rgba(255, 255, 255, 0.03);
+      padding: 12px 16px;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background-color: var(--bg-hover); }
+
+    /* Feed Container */
+    .feed-container {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .tweet-item {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .tweet-item:last-child { border-bottom: none; }
+    .tweet-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .tweet-content {
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+
+    /* Abas Dinâmicas */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Gráfico */
+    .chart-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 28px;
+      height: 340px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="logo-badge">MH</span>
+      <span>Mental Hedge OS</span>
+    </div>
+    <nav>
+      <div class="nav-item active" onclick="switchTab('dashboard', this)">📊 Dashboard & Briefing</div>
+      <div class="nav-item" onclick="switchTab('advisor', this)">🧠 Consultor de Risco & IA</div>
+      <div class="nav-item" onclick="switchTab('radar', this)">🧭 Radar de Teses</div>
+      <div class="nav-item" onclick="switchTab('paper', this)">📈 Paper Trading</div>
+      <div class="nav-item" onclick="switchTab('playbook', this)">📜 Bíblia / Playbook</div>
+      <div class="nav-item" onclick="switchTab('feed', this)">💬 Feed do Autor</div>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <div class="header-bar">
+      <div class="page-title">
+        <h1 id="view-title">Painel de Inteligência Macroeconômica</h1>
+        <p id="view-subtitle">Modelo operacional baseado na metodologia do @mentalhedgebr</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-action" onclick="triggerDailyCycle()">
+          <span id="btn-cycle-icon">⚡</span>
+          <span id="btn-cycle-text">Rodar Ciclo & Notificar Telegram</span>
+        </button>
+        <span style="font-size: 0.8rem; background: rgba(16, 185, 129, 0.15); color: var(--accent-green); padding: 6px 12px; border-radius: 20px; font-weight: 600;">
+          🟢 Sistema Ativo no Linux
+        </span>
+      </div>
+    </div>
+
+    <!-- TAB 1: DASHBOARD & BRIEFING -->
+    <div id="tab-dashboard" class="tab-content active">
+      <!-- Cards de Métricas do Backtest & Caixa -->
+      <div class="top-cards">
+        <div class="stat-card">
+          <div class="stat-card-title">Taxa de Acerto Geral (Backtest)</div>
+          <div class="stat-card-value" style="color: var(--accent-green);" id="card-winrate">68.3%</div>
+          <div class="stat-card-sub" id="card-winrate-sub">99 acertos em 145 operações no ano</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-title">Acerto em Gatilhos Reais</div>
+          <div class="stat-card-value" style="color: var(--accent-blue);">90.7%</div>
+          <div class="stat-card-sub">96.3% em ativos prime com confluência</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-title">Patrimônio Seguro Protegido</div>
+          <div class="stat-card-value" style="color: var(--accent-yellow);" id="card-cash-usd">$20,011.17</div>
+          <div class="stat-card-sub" id="card-cash-brl">+ R$ 50,060.81 no Tesouro Selic</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-title">Operações Ativas Hipotéticas</div>
+          <div class="stat-card-value" style="color: var(--text-main);" id="card-active-pos">0 Posições</div>
+          <div class="stat-card-sub">Aguardando gatilhos de 3 mãos</div>
+        </div>
+      </div>
+
+      <!-- Termômetro de Rotação de Ciclo -->
+      <div class="cycle-tracker">
+        <div class="cycle-header">
+          <div>
+            <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px;">Termômetro de Rotação de Capital</span>
+            <h2 style="font-size: 1.1rem; margin-top: 2px;">Onde estamos no Ciclo de Liquidez Global</h2>
+          </div>
+          <span style="font-size: 0.8rem; color: var(--accent-blue); font-weight: 600;">Fase Atual: Transbordo de Topo TradFi</span>
+        </div>
+        <div class="cycle-steps">
+          <div class="cycle-step current">
+            <div class="step-num">ETAPA 1 (ATUAL)</div>
+            <div class="step-title" style="color: var(--accent-blue);">Bolsas EUA (SPX/NDX)</div>
+            <div class="step-desc">Fase final parabólica (Onda 5). Autor 100% fora de compras e em caixa SGOV.</div>
+          </div>
+          <div class="cycle-step">
+            <div class="step-num">ETAPA 2 (PREPARANDO)</div>
+            <div class="step-title">Bitcoin (BTC)</div>
+            <div class="step-desc">Construção de base Wyckoff. Standby até confirmação clara ou teste nos $52k.</div>
+          </div>
+          <div class="cycle-step">
+            <div class="step-num">ETAPA 3 (AGUARDO)</div>
+            <div class="step-title">Ethereum (ETH)</div>
+            <div class="step-desc">Compras antecipadas ($2,5k–$2,7k). Romper a ATH é o gatilho-chave para Altcoins.</div>
+          </div>
+          <div class="cycle-step">
+            <div class="step-num">ETAPA 4 (ÚLTIMA)</div>
+            <div class="step-title">Altcoins & Mineradoras</div>
+            <div class="step-desc">Apenas 15% plantados. A grande alocação só ocorre após o ETH romper máxima.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboard de Oportunidades & Confluência -->
+      <div style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 28px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div>
+            <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--accent-blue); font-weight: 700; letter-spacing: 0.5px;">Ranking Algorítmico do Ciclo</span>
+            <h3 style="font-size: 1.15rem; margin-top: 2px; display: flex; align-items: center; gap: 8px;">
+              <span>🏆 Leaderboard de Confluência & Assimetria</span>
+            </h3>
+          </div>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">
+            Rankeado pelos 4 Pilares • Clique em uma tese para abrir a análise e os setups
+          </span>
+        </div>
+
+        <!-- Tabela do Top 5 -->
+        <div id="leaderboard-top5" style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="color: var(--text-muted); font-size: 0.85rem; padding: 12px;">Carregando ranking de oportunidades...</div>
+        </div>
+
+        <!-- Linhas Restantes (Expansível / Ver Mais) -->
+        <div id="leaderboard-more" style="display: none; flex-direction: column; gap: 10px; margin-top: 10px; border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 14px;">
+        </div>
+
+        <!-- Botão Ver Mais / Ver Menos -->
+        <div style="text-align: center; margin-top: 14px;">
+          <button id="btn-toggle-leaderboard" onclick="toggleLeaderboard()" style="background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--accent-blue); padding: 8px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+            <span>Ver Ranking Completo (11 Teses Monitoradas) ▾</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Briefing Diário Automatizado da IA -->
+      <div id="briefing-container" style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 12px; padding: 20px 24px; margin-bottom: 28px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h3 style="font-size: 1rem; color: var(--accent-blue); display: flex; align-items: center; gap: 8px;">
+            <span>🤖 Briefing Macroeconômico Diário (Traduzido sem Economês)</span>
+          </h3>
+          <span id="briefing-date" style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;"></span>
+        </div>
+        <div id="briefing-insights" style="display: flex; flex-direction: column; gap: 10px; font-size: 0.88rem; line-height: 1.5;">
+          <!-- Inserido dinamicamente via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB ADVISOR: CONSULTOR DE RISCO & IA -->
+    <div id="tab-advisor" class="tab-content">
+      <div class="section-title">
+        <span>🧠 Consultor de Teses, Risco Específico & Gerador de Setups</span>
+      </div>
+
+      <!-- Formulário de Consulta -->
+      <div style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 22px; margin-bottom: 24px;">
+        <div style="display: grid; grid-template-columns: 2fr 1.5fr 1.5fr; gap: 16px; align-items: end;">
+          <div>
+            <label style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 8px;">
+              Ativo ou Classe
+            </label>
+            <select id="adv-asset" style="width: 100%; background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-main); padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; font-family: inherit;">
+              <option value="BTC">Bitcoin (BTC)</option>
+              <option value="ETH">Ethereum (ETH)</option>
+              <option value="ALTS">Altcoins em Geral / Memecoins (TOTAL3/OTHERS)</option>
+              <option value="MARA">Ações de Mineradoras (MARA, RIOT, CLSK)</option>
+              <option value="WTI">Petróleo (WTI / Brent Crude Oil)</option>
+              <option value="SPX">Bolsas Americanas (S&P 500 / Nasdaq)</option>
+              <option value="RUT">Small Caps dos EUA (Russell 2000)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 8px;">
+              Direção Desejada
+            </label>
+            <select id="adv-dir" style="width: 100%; background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-main); padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; font-family: inherit;">
+              <option value="long">🟢 Compra (Long / Aposta na Alta)</option>
+              <option value="short">🔴 Venda / Short (Aposta na Queda)</option>
+            </select>
+          </div>
+          <div>
+            <button class="btn-action" style="width: 100%; height: 42px; justify-content: center;" onclick="runAdvisorQuery()">
+              <span>🔍 Consultar IA & Gerar Setups</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Container de Resultados do Advisor -->
+      <div id="adv-result" style="display: none;">
+        <!-- Banner de Score -->
+        <div id="adv-score-banner" style="border-radius: 12px; padding: 18px 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border);">
+          <div>
+            <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;" id="adv-score-label">Score de Confluência</div>
+            <div style="font-size: 1.5rem; font-weight: 700; margin-top: 4px;" id="adv-verdict-text">SINAL VERDE</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 2rem; font-weight: 800; font-family: 'JetBrains Mono', monospace;" id="adv-score-num">85/100</div>
+            <div style="font-size: 0.75rem;" id="adv-asym-pill">Assimetria Máxima</div>
+          </div>
+        </div>
+
+        <!-- 4 Pilares da Confluência Matemática -->
+        <div class="section-title" style="margin-bottom: 12px;">
+          <span>⚖️ Decomposição da Nota nos 4 Pilares do Método</span>
+        </div>
+        <div id="adv-pillars-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px;">
+          <!-- Inserido dinamicamente via JS -->
+        </div>
+
+        <!-- Cards de Tradução Leiga (O que aconteceu -> Por que importa -> O que fazer) -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 24px;">
+          <div style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--accent-blue); font-weight: 700; margin-bottom: 8px;">
+              📖 1. O Que Aconteceu no Histórico
+            </div>
+            <p id="adv-text-history" style="font-size: 0.85rem; line-height: 1.5; color: var(--text-muted);"></p>
+          </div>
+
+          <div style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--accent-yellow); font-weight: 700; margin-bottom: 8px;">
+              ⚠️ 2. Por Que Importa (Riscos Específicos)
+            </div>
+            <p id="adv-text-why" style="font-size: 0.85rem; line-height: 1.5; color: var(--text-muted);"></p>
+          </div>
+
+          <div style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--accent-green); font-weight: 700; margin-bottom: 8px;">
+              🎯 3. O Que Fazer (Instrução Canônica)
+            </div>
+            <p id="adv-text-action" style="font-size: 0.85rem; line-height: 1.5; color: var(--text-muted);"></p>
+          </div>
+        </div>
+
+        <!-- Seção: Quando arriscar mais sem risco de ruína -->
+        <div style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px; padding: 20px 24px; margin-bottom: 28px;">
+          <h4 style="font-size: 0.95rem; color: var(--accent-purple); display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span>⚡ Quando Arriscar Mais para Maximizar Lucro sem Risco de Ruína</span>
+          </h4>
+          <p id="adv-risk-more" style="font-size: 0.88rem; line-height: 1.5; color: var(--text-main);"></p>
+        </div>
+
+        <!-- 3 Opções de Setups de Proteção -->
+        <div class="section-title">
+          <span>🛡️ Opções de Setups Prontos para Blindar a Operação</span>
+        </div>
+        <div id="adv-setups-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 28px;">
+          <!-- Inserido dinamicamente via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: RADAR DE TESES (KANBAN) -->
+    <div id="tab-radar" class="tab-content">
+      <div class="section-title">
+        <span>🧭 Radar Operacional das Teses (Máquina de Estados)</span>
+      </div>
+      <div class="kanban-grid">
+        <div class="kanban-col">
+          <div class="kanban-header">
+            <span style="color: var(--text-muted);">1. Mapeamento / Expectativa</span>
+            <span class="tag tag-caixa" id="count-exp">0</span>
+          </div>
+          <div class="kanban-body" id="col-exp"></div>
+        </div>
+        <div class="kanban-col">
+          <div class="kanban-header">
+            <span style="color: var(--accent-yellow);">2. Na Zona de Preço (Atenção)</span>
+            <span class="tag tag-caixa" id="count-zona">0</span>
+          </div>
+          <div class="kanban-body" id="col-zona"></div>
+        </div>
+        <div class="kanban-col">
+          <div class="kanban-header">
+            <span style="color: var(--accent-green);">3. Gatilho Confirmado (Execução)</span>
+            <span class="tag tag-long" id="count-gat">0</span>
+          </div>
+          <div class="kanban-body" id="col-gat"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: PAPER TRADING & CURVA DE CAPITAL -->
+    <div id="tab-paper" class="tab-content">
+      <div class="section-title">
+        <span>📈 Evolução Patrimonial (Curva de Capital Anti-Ruína)</span>
+      </div>
+      <div class="chart-box">
+        <canvas id="equityChart"></canvas>
+      </div>
+
+      <div class="section-title">
+        <span>🛡️ Posições Abertas em 3 Mãos</span>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Ativo</th>
+              <th>Direção</th>
+              <th>Mão</th>
+              <th>Entrada Média</th>
+              <th>Cotação Atual</th>
+              <th>Stop Loss</th>
+              <th>Status Breakeven</th>
+              <th>Alocado (USD)</th>
+              <th>Aberto em</th>
+            </tr>
+          </thead>
+          <tbody id="open-positions-tbody">
+            <tr>
+              <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 24px;">
+                Nenhuma posição aberta no momento. O capital está 100% protegido em Caixa Seguro (SGOV e Selic).
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-title">
+        <span>📜 Histórico Recente de Operações Fechadas</span>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Ativo</th>
+              <th>Direção</th>
+              <th>Entrada</th>
+              <th>Saída</th>
+              <th>Resultado (USD)</th>
+              <th>Resultado (%)</th>
+              <th>Motivo da Saída</th>
+              <th>Fechado em</th>
+            </tr>
+          </thead>
+          <tbody id="closed-trades-tbody">
+            <tr>
+              <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 24px;">
+                Nenhum trade encerrado recentemente.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 4: PLAYBOOK & BÍBLIA -->
+    <div id="tab-playbook" class="tab-content">
+      <div class="section-title">
+        <span>📜 Bíblia Operacional & Regras Anti-Ruína</span>
+      </div>
+      <div style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; font-size: 0.9rem; line-height: 1.6;">
+        <h3 style="color: var(--accent-blue); margin-bottom: 12px;">As 3 Leis Imutáveis do Mental Hedge</h3>
+        <ul style="margin-left: 20px; margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px;">
+          <li><strong>1. Hierarquia de Liquidez:</strong> TradFi (SPX/NDX) &gt; Bitcoin &gt; Ethereum &gt; Altcoins. Dinheiro institucional não pula etapas.</li>
+          <li><strong>2. Expectativa NÃO é Entrada:</strong> Saber para onde o mercado vai não dá o direito de comprar. Espera a Zona de Interesse e aguarda Estrutura com Pavio de Rejeição.</li>
+          <li><strong>3. Preservação Obsessiva (Anti-Ruína):</strong> Até 80% do tempo em caixa remunerado (SGOV / Selic). Jamais operar por ansiedade ou medo de ficar de fora.</li>
+        </ul>
+
+        <h3 style="color: var(--accent-yellow); margin-bottom: 12px;">As 5 Regras Negativas Invioláveis (trade_learning_memory.json)</h3>
+        <ul style="margin-left: 20px; display: flex; flex-direction: column; gap: 8px;">
+          <li><strong>NUNCA shortear blow-off:</strong> Em acelerações parabólicas da Onda 5, irracionalidade não tem teto. Ficar fora em SGOV.</li>
+          <li><strong>Stop no 0 a 0 aos +5%:</strong> Bateu +5% de ganho, realiza 1/3 do lucro e move o stop de todo o restante para o preço de entrada. Risco zero absoluto.</li>
+          <li><strong>Pré-requisito ETH para Alts:</strong> Proibido alocar mão cheia em Altcoins antes do rompimento confirmado de Máxima Histórica do ETH (US$ 4.957).</li>
+          <li><strong>Proibido mineradoras a seco:</strong> Comprar ações de mineradoras (MARA, RIOT) sem proteção vendida em BTC gerou drawdowns de -60% no topo.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- TAB 5: FEED DO AUTOR -->
+    <div id="tab-feed" class="tab-content">
+      <div class="feed-container">
+        <div class="section-title">
+          <span>💬 Feed de Tweets Analisados & Gráficos Recentes</span>
+        </div>
+        <div id="tweet-list"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    let equityChartInstance = null;
+
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      
+      const target = document.getElementById('tab-' + tabId);
+      if (target) target.classList.add('active');
+      if (el) el.classList.add('active');
+
+      const titles = {
+        'dashboard': ['Painel de Inteligência Macroeconômica', 'Modelo operacional baseado na metodologia do @mentalhedgebr'],
+        'advisor': ['Consultor de Risco & IA', 'Análise de confluência, risco específico e opções de blindagem patrimonial'],
+        'radar': ['Radar Operacional das Teses', 'Acompanhamento da Máquina de Estados: Expectativa -> Na Zona -> Gatilho'],
+        'paper': ['Paper Trading & Curva de Capital', 'Simulador de carteira anti-ruína com caixa remunerado e regras de 3 mãos'],
+        'playbook': ['Bíblia Operacional do Mental Hedge', 'Regras canônicas, hierarquia de liquidez e parâmetros anti-ruína'],
+        'feed': ['Feed do Autor & OCR Gráfico', 'Últimas publicações e leituras visuais do TradingView']
+      };
+      
+      if (titles[tabId]) {
+        document.getElementById('view-title').innerText = titles[tabId][0];
+        document.getElementById('view-subtitle').innerText = titles[tabId][1];
+      }
+
+      if (tabId === 'paper') {
+        loadPortfolio();
+      }
+      if (tabId === 'advisor') {
+        runAdvisorQuery();
+      }
+    }
+
+    async function triggerDailyCycle() {
+      const btnText = document.getElementById('btn-cycle-text');
+      const btnIcon = document.getElementById('btn-cycle-icon');
+      btnText.innerText = 'Processando e Notificando...';
+      btnIcon.innerText = '⏳';
+      try {
+        const res = await fetch('/api/run_cycle', { method: 'POST' });
+        const data = await res.json();
+        if (data.status === 'success') {
+          btnText.innerText = 'Ciclo Rodado com Sucesso!';
+          btnIcon.innerText = '✅';
+          setTimeout(() => {
+            btnText.innerText = 'Rodar Ciclo & Notificar Telegram';
+            btnIcon.innerText = '⚡';
+          }, 3000);
+          loadSummary();
+          loadPortfolio();
+          loadLeaderboard();
+        }
+      } catch (e) {
+        btnText.innerText = 'Erro ao Executar';
+        btnIcon.innerText = '❌';
+        console.error(e);
+      }
+    }
+
+    async function loadRadar() {
+      try {
+        const res = await fetch('/api/radar');
+        const data = await res.json();
+        
+        const renderList = (items, targetId) => {
+          const container = document.getElementById(targetId);
+          container.innerHTML = items.slice(0, 15).map(item => `
+            <div class="thesis-card">
+              <div class="thesis-top">
+                <span class="thesis-asset">${item.asset}</span>
+                <span class="tag ${item.direction === 'long' ? 'tag-long' : (item.direction === 'short' ? 'tag-short' : 'tag-caixa')}">${item.direction}</span>
+              </div>
+              <p class="thesis-text">${item.quote || 'Cenário macro identificado.'}</p>
+              <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 6px; font-family: monospace;">Data: ${item.date}</div>
+            </div>
+          `).join('');
+        };
+
+        renderList(data.expectativa, 'col-exp');
+        renderList(data.zona_monitorar, 'col-zona');
+        renderList(data.gatilho_entrada, 'col-gat');
+
+        document.getElementById('count-exp').innerText = data.expectativa.length;
+        document.getElementById('count-zona').innerText = data.zona_monitorar.length;
+        document.getElementById('count-gat').innerText = data.gatilho_entrada.length;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function loadPortfolio() {
+      try {
+        const res = await fetch('/api/portfolio');
+        const data = await res.json();
+        
+        document.getElementById('card-cash-usd').innerText = `$${data.cash_usd.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+        document.getElementById('card-cash-brl').innerText = `+ R$ ${data.cash_brl.toLocaleString('pt-BR', {minimumFractionDigits: 2})} no Tesouro Selic`;
+        document.getElementById('card-active-pos').innerText = `${data.active_positions_count} Posições`;
+
+        // Renderiza posições abertas
+        const tbodyPos = document.getElementById('open-positions-tbody');
+        if (data.positions && data.positions.length > 0) {
+          tbodyPos.innerHTML = data.positions.map(p => `
+            <tr>
+              <td><strong>${p.asset}</strong></td>
+              <td><span class="tag ${p.direction === 'long' ? 'tag-long' : 'tag-short'}">${p.direction}</span></td>
+              <td>${p.hand}</td>
+              <td>$${p.avg_entry_price.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+              <td>$${p.current_price.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+              <td>$${p.stop_loss.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+              <td>${p.breakeven_active ? '<span style="color: var(--accent-green); font-weight:600;">🛡️ 0 a 0 Ativo</span>' : 'Pendente (+5%)'}</td>
+              <td>$${p.allocated_usd.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+              <td>${p.opened_at.substring(0, 10)}</td>
+            </tr>
+          `).join('');
+        }
+
+        // Renderiza histórico
+        const tbodyHist = document.getElementById('closed-trades-tbody');
+        if (data.recent_history && data.recent_history.length > 0) {
+          tbodyHist.innerHTML = data.recent_history.map(h => `
+            <tr>
+              <td><strong>${h.asset}</strong></td>
+              <td><span class="tag ${h.direction === 'long' ? 'tag-long' : 'tag-short'}">${h.direction}</span></td>
+              <td>$${h.entry_price.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+              <td>$${h.exit_price.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+              <td style="color: ${h.pnl_usd >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'}">$${h.pnl_usd.toFixed(2)}</td>
+              <td style="color: ${h.pnl_pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'}">${h.pnl_pct.toFixed(2)}%</td>
+              <td><span class="tag tag-caixa">${h.exit_reason}</span></td>
+              <td>${h.closed_at.substring(0, 10)}</td>
+            </tr>
+          `).join('');
+        }
+
+        // Curva de Capital (Chart.js)
+        renderEquityChart(data.equity_curve || []);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function renderEquityChart(history) {
+      const ctx = document.getElementById('equityChart');
+      if (!ctx) return;
+
+      const labels = history.length > 0 ? history.map(h => h.date) : [new Date().toISOString().substring(0, 10)];
+      const values = history.length > 0 ? history.map(h => h.total_usd) : [20000];
+
+      if (equityChartInstance) {
+        equityChartInstance.destroy();
+      }
+
+      equityChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Patrimônio Total Simulado (USD)',
+            data: values,
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 4,
+            pointBackgroundColor: '#3b82f6'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: '#8b9bb4', font: { family: 'Inter' } }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#8b9bb4' }
+            },
+            y: {
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { 
+                color: '#8b9bb4',
+                callback: function(value) { return '$' + value.toLocaleString(); }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    async function loadTweets() {
+      try {
+        const res = await fetch('/api/tweets');
+        const tweets = await res.json();
+        const container = document.getElementById('tweet-list');
+        container.innerHTML = tweets.slice(0, 10).map(t => `
+          <div class="tweet-item">
+            <div class="tweet-meta">
+              <span>Tweet ${t.id}</span>
+              <span>${t.created_at_iso ? t.created_at_iso.substring(0, 16).replace('T', ' ') : ''}</span>
+              <span>❤️ ${t.metrics ? t.metrics.likes || 0 : 0}</span>
+            </div>
+            <div class="tweet-content">${t.text || 'Sem texto'}</div>
+            ${t.image_transcriptions && t.image_transcriptions.length > 0 ? `
+              <div style="font-size: 0.75rem; background: rgba(59, 130, 246, 0.08); border-left: 3px solid var(--accent-blue); padding: 8px 12px; border-radius: 4px; margin-top: 4px;">
+                <strong>📊 Análise do Gráfico:</strong> ${t.image_transcriptions[0].transcription.substring(0, 240)}...
+              </div>
+            ` : ''}
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function runAdvisorQuery() {
+      const asset = document.getElementById('adv-asset').value;
+      const dir = document.getElementById('adv-dir').value;
+      
+      const resultContainer = document.getElementById('adv-result');
+      resultContainer.style.display = 'block';
+      
+      try {
+        const res = await fetch(`/api/advisory?asset=${asset}&direction=${dir}`);
+        const data = await res.json();
+        
+        // Atualiza Banner de Score
+        const score = data.confluence_score !== undefined ? data.confluence_score : 50;
+        const verdict = data.confluence_verdict || 'ANÁLISE';
+        const asym = data.asymmetry_level || 'Média';
+        
+        document.getElementById('adv-score-num').innerText = score + '/100';
+        document.getElementById('adv-verdict-text').innerText = verdict;
+        document.getElementById('adv-asym-pill').innerText = 'Assimetria: ' + asym;
+        
+        const banner = document.getElementById('adv-score-banner');
+        if (score >= 75) {
+          banner.style.background = 'rgba(16, 185, 129, 0.12)';
+          banner.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+          document.getElementById('adv-verdict-text').style.color = '#10b981';
+        } else if (score >= 50) {
+          banner.style.background = 'rgba(245, 158, 11, 0.12)';
+          banner.style.borderColor = 'rgba(245, 158, 11, 0.4)';
+          document.getElementById('adv-verdict-text').style.color = '#f59e0b';
+        } else {
+          banner.style.background = 'rgba(239, 68, 68, 0.12)';
+          banner.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+          document.getElementById('adv-verdict-text').style.color = '#ef4444';
+        }
+        
+        // Renderiza Decomposição nos 4 Pilares
+        const pillarsGrid = document.getElementById('adv-pillars-grid');
+        if (data.score_breakdown) {
+          const p1 = data.score_breakdown['Pilar1_Macro_Liquidez'] || { pts: 0, desc: 'Neutro' };
+          const p2 = data.score_breakdown['Pilar2_Fila_Rotacao'] || { pts: 0, desc: 'Neutro' };
+          const p3 = data.score_breakdown['Pilar3_Caixa_Grafica'] || { pts: 0, desc: 'Neutro' };
+          const p4 = data.score_breakdown['Pilar4_Backtest_Assimetria'] || { pts: 0, desc: 'Neutro' };
+          
+          pillarsGrid.innerHTML = `
+            <div style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">🌐 Macro & DXY</span>
+                <strong style="color: ${p1.pts >= 18 ? '#10b981' : p1.pts >= 10 ? '#f59e0b' : '#ef4444'}; font-size: 0.85rem;">${p1.pts}/25 pts</strong>
+              </div>
+              <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; margin: 0;">${p1.desc}</p>
+            </div>
+            
+            <div style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">🔄 Fila de Rotação</span>
+                <strong style="color: ${p2.pts >= 18 ? '#10b981' : p2.pts >= 10 ? '#f59e0b' : '#ef4444'}; font-size: 0.85rem;">${p2.pts}/25 pts</strong>
+              </div>
+              <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; margin: 0;">${p2.desc}</p>
+            </div>
+            
+            <div style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">📐 Caixas TradingView</span>
+                <strong style="color: ${p3.pts >= 18 ? '#10b981' : p3.pts >= 10 ? '#f59e0b' : '#ef4444'}; font-size: 0.85rem;">${p3.pts}/25 pts</strong>
+              </div>
+              <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; margin: 0;">${p3.desc}</p>
+            </div>
+            
+            <div style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">📊 Backtest Real</span>
+                <strong style="color: ${p4.pts >= 18 ? '#10b981' : p4.pts >= 10 ? '#f59e0b' : '#ef4444'}; font-size: 0.85rem;">${p4.pts}/25 pts</strong>
+              </div>
+              <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; margin: 0;">${p4.desc}</p>
+            </div>
+          `;
+        }
+        
+        // Atualiza Trinca Leiga
+        document.getElementById('adv-text-history').innerHTML = (data.o_que_aconteceu_no_historico || '').replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        document.getElementById('adv-text-why').innerHTML = (data.por_que_importa || '').replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        document.getElementById('adv-text-action').innerHTML = (data.o_que_fazer || '').replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        document.getElementById('adv-risk-more').innerHTML = (data.quando_arriscar_mais_sem_ruina || '').replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        
+        // Atualiza Cards de Setups Blindados
+        const setupsGrid = document.getElementById('adv-setups-grid');
+        if (data.setups_de_protecao && data.setups_de_protecao.length > 0) {
+          setupsGrid.innerHTML = data.setups_de_protecao.map((s, idx) => `
+            <div style="background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                  <span style="font-weight: 700; font-size: 1rem; color: #fff;">${s.nome}</span>
+                  <span style="font-size: 0.7rem; background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); padding: 2px 8px; border-radius: 4px; font-weight: 600;">Opção ${idx + 1}</span>
+                </div>
+                <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 16px;">
+                  ${s.descricao}
+                </p>
+              </div>
+              <div style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 14px; font-size: 0.78rem;">
+                <div style="margin-bottom: 6px; display: flex; justify-content: space-between;">
+                  <span style="color: var(--text-muted);">Alocação Segura:</span>
+                  <strong style="color: #fff;">${s.alocacao_recomendada}</strong>
+                </div>
+                <div style="margin-bottom: 6px; display: flex; justify-content: space-between;">
+                  <span style="color: var(--text-muted);">Stop Loss:</span>
+                  <strong style="color: var(--accent-red);">${s.stop_loss}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span style="color: var(--text-muted);">Gatilho Breakeven:</span>
+                  <strong style="color: var(--accent-green);">${s.gatilho_breakeven}</strong>
+                </div>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    const DEFAULT_LEADERBOARD = [
+      {
+        "rank": 1,
+        "asset": "RUT",
+        "direction": "long",
+        "display_name": "Russell 2000 (Small Caps)",
+        "summary": "Reteste de Pivô Secular (2.466 pts) + Put Delta extremo (-$55B)",
+        "score": 99,
+        "badge": "GREEN",
+        "status_tag": "Sinal Verde (Autorizado)",
+        "status_icon": "🟢"
+      },
+      {
+        "rank": 2,
+        "asset": "WTI",
+        "direction": "short",
+        "display_name": "Petróleo WTI / Brent",
+        "summary": "Caixa de Oferta Macro ($85-$111) rumo a sub-$50",
+        "score": 97,
+        "badge": "GREEN",
+        "status_tag": "Sinal Verde (Autorizado)",
+        "status_icon": "🟢"
+      },
+      {
+        "rank": 3,
+        "asset": "ETH",
+        "direction": "long",
+        "display_name": "Ethereum",
+        "summary": "Suporte verde ($2.400-$2.500) e defesa da paridade ETH/BTC",
+        "score": 75,
+        "badge": "GREEN",
+        "status_tag": "Sinal Verde (Autorizado)",
+        "status_icon": "🟢"
+      },
+      {
+        "rank": 4,
+        "asset": "BTC",
+        "direction": "long",
+        "display_name": "Bitcoin",
+        "summary": "Suporte Secular de Liquidez ($52k / $74k) com barra impulsiva",
+        "score": 67,
+        "badge": "YELLOW",
+        "status_tag": "Em Observação (Aguardar Gatilho)",
+        "status_icon": "🟡"
+      },
+      {
+        "rank": 5,
+        "asset": "BTC",
+        "direction": "short",
+        "display_name": "Bitcoin",
+        "summary": "Cunha Ascendente arrastada sem volume contra resistência",
+        "score": 60,
+        "badge": "YELLOW",
+        "status_tag": "Em Observação (Aguardar Gatilho)",
+        "status_icon": "🟡"
+      },
+      {
+        "rank": 6,
+        "asset": "MARA",
+        "direction": "long",
+        "display_name": "Mineradoras (MARA/RIOT)",
+        "summary": "Sobrevenda técnica com Hedge Delta-Neutro de BTC",
+        "score": 55,
+        "badge": "YELLOW",
+        "status_tag": "Em Observação (Aguardar Gatilho)",
+        "status_icon": "🟡"
+      },
+      {
+        "rank": 7,
+        "asset": "ALTS",
+        "direction": "long",
+        "display_name": "Altcoins em Geral (OTHERS)",
+        "summary": "Compressão tática de pé na água (1% a 4% do portfólio)",
+        "score": 50,
+        "badge": "YELLOW",
+        "status_tag": "Em Observação (Aguardar Gatilho)",
+        "status_icon": "🟡"
+      },
+      {
+        "rank": 8,
+        "asset": "RUT",
+        "direction": "short",
+        "display_name": "Russell 2000 (Small Caps)",
+        "summary": "Short contra suporte secular e Put Delta institucional",
+        "score": 42,
+        "badge": "RED",
+        "status_tag": "Bloqueado (Risco de Ruína)",
+        "status_icon": "🔴"
+      },
+      {
+        "rank": 9,
+        "asset": "SPX",
+        "direction": "short",
+        "display_name": "Bolsas dos EUA (SPX/NDX)",
+        "summary": "Exaustão pós-quebra de média móvel de 20 dias",
+        "score": 30,
+        "badge": "RED",
+        "status_tag": "Bloqueado (Risco de Ruína)",
+        "status_icon": "🔴"
+      },
+      {
+        "rank": 10,
+        "asset": "WTI",
+        "direction": "long",
+        "display_name": "Petróleo WTI / Brent",
+        "summary": "Repique especulativo contra-tendência secular",
+        "score": 27,
+        "badge": "RED",
+        "status_tag": "Bloqueado (Risco de Ruína)",
+        "status_icon": "🔴"
+      },
+      {
+        "rank": 11,
+        "asset": "SPX",
+        "direction": "long",
+        "display_name": "Bolsas dos EUA (SPX/NDX)",
+        "summary": "Distribuição final de Onda 5 Blow-Off terminal",
+        "score": 15,
+        "badge": "RED",
+        "status_tag": "Bloqueado (Risco de Ruína)",
+        "status_icon": "🔴"
+      }
+    ];
+
+    let cachedLeaderboard = DEFAULT_LEADERBOARD;
+    let isLeaderboardExpanded = false;
+
+    function renderLeaderboardRow(item) {
+      const isGreen = item.score >= 75;
+      const isYellow = item.score >= 50 && item.score < 75;
+      const badgeBg = isGreen ? 'rgba(16, 185, 129, 0.15)' : isYellow ? 'rgba(245, 158, 11, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+      const badgeColor = isGreen ? '#10b981' : isYellow ? '#f59e0b' : '#ef4444';
+      const medal = item.rank === 1 ? '🥇' : item.rank === 2 ? '🥈' : item.rank === 3 ? '🥉' : `#${item.rank}`;
+
+      return `
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; transition: all 0.2s; cursor: pointer;"
+             onmouseover="this.style.background='rgba(255,255,255,0.04)'; this.style.borderColor='rgba(59,130,246,0.3)';"
+             onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.borderColor='rgba(255,255,255,0.06)';"
+             onclick="openAdvisorFor('${item.asset}', '${item.direction}')">
+          
+          <div style="display: flex; align-items: center; gap: 14px; min-width: 280px;">
+            <span style="font-size: 1.1rem; width: 30px; text-align: center; font-weight: 700; color: var(--text-muted);">${medal}</span>
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <strong style="color: #fff; font-size: 0.95rem;">${item.display_name}</strong>
+                <span style="font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: ${item.direction === 'long' ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'}; color: ${item.direction === 'long' ? '#10b981' : '#ef4444'}; text-transform: uppercase;">
+                  ${item.direction === 'long' ? '🟢 COMPRA' : '🔴 VENDA'}
+                </span>
+              </div>
+              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+                ${item.summary}
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 18px; flex: 1; max-width: 320px;">
+            <div style="flex: 1; background: rgba(255,255,255,0.08); height: 8px; border-radius: 4px; overflow: hidden;">
+              <div style="width: ${item.score}%; height: 100%; background: ${badgeColor}; border-radius: 4px;"></div>
+            </div>
+            <div style="text-align: right; min-width: 90px;">
+              <span style="font-size: 1.1rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: ${badgeColor};">${item.score}/100</span>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 0.72rem; padding: 4px 10px; border-radius: 6px; font-weight: 600; background: ${badgeBg}; color: ${badgeColor};">
+              ${item.status_tag}
+            </span>
+            <button class="btn-action" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 6px;" onclick="event.stopPropagation(); openAdvisorFor('${item.asset}', '${item.direction}')">
+              <span>🔍 Ver Setup</span>
+            </button>
+          </div>
+
+        </div>
+      `;
+    }
+
+    function renderLeaderboard(board) {
+      if (!Array.isArray(board) || board.length === 0) return;
+      cachedLeaderboard = board;
+      
+      const top5Container = document.getElementById('leaderboard-top5');
+      const moreContainer = document.getElementById('leaderboard-more');
+      
+      const top5 = board.slice(0, 5);
+      const rest = board.slice(5);
+      
+      if (top5Container) {
+        top5Container.innerHTML = top5.map(item => renderLeaderboardRow(item)).join('');
+      }
+      if (moreContainer) {
+        moreContainer.innerHTML = rest.map(item => renderLeaderboardRow(item)).join('');
+      }
+    }
+
+    function toggleLeaderboard() {
+      const moreDiv = document.getElementById('leaderboard-more');
+      const btn = document.getElementById('btn-toggle-leaderboard');
+      
+      // Se por algum motivo estiver vazio mas temos cache, renderiza
+      if (moreDiv && moreDiv.children.length === 0 && cachedLeaderboard.length > 5) {
+        const rest = cachedLeaderboard.slice(5);
+        moreDiv.innerHTML = rest.map(item => renderLeaderboardRow(item)).join('');
+      }
+      
+      isLeaderboardExpanded = !isLeaderboardExpanded;
+      if (isLeaderboardExpanded) {
+        moreDiv.style.display = 'flex';
+        btn.innerHTML = '<span>Recolher Ranking Completo ▴</span>';
+      } else {
+        moreDiv.style.display = 'none';
+        btn.innerHTML = '<span>Ver Ranking Completo (11 Teses Monitoradas) ▾</span>';
+      }
+    }
+
+    function openAdvisorFor(asset, direction) {
+      const advisorNavItem = document.querySelectorAll('.nav-item')[1];
+      switchTab('advisor', advisorNavItem);
+      
+      const selectAsset = document.getElementById('adv-asset');
+      const selectDir = document.getElementById('adv-dir');
+      
+      if (selectAsset) {
+        let matched = false;
+        for (let i = 0; i < selectAsset.options.length; i++) {
+          if (selectAsset.options[i].value === asset) {
+            selectAsset.selectedIndex = i;
+            matched = true;
+            break;
+          }
+        }
+        if (!matched && asset === 'NDX') selectAsset.value = 'SPX';
+      }
+      if (selectDir) {
+        selectDir.value = direction;
+      }
+      
+      runAdvisorQuery();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function loadLeaderboard() {
+      try {
+        const res = await fetch('/api/leaderboard');
+        const board = await res.json();
+        if (Array.isArray(board) && board.length > 0) {
+          renderLeaderboard(board);
+        }
+      } catch (e) {
+        console.warn('Tentando carregar leaderboard via fallback...', e);
+      }
+    }
+
+    async function loadSummary() {
+      try {
+        const res = await fetch('/api/summary');
+        const data = await res.json();
+        
+        // Se a API /api/summary já trouxer o leaderboard embutido, renderiza na hora!
+        if (data.leaderboard && Array.isArray(data.leaderboard)) {
+          renderLeaderboard(data.leaderboard);
+        }
+
+        if (data.daily_briefing && data.daily_briefing.insights_leigos) {
+          document.getElementById('briefing-date').innerText = data.daily_briefing.generated_at || '';
+          const container = document.getElementById('briefing-insights');
+          container.innerHTML = data.daily_briefing.insights_leigos.map(ins => `
+            <div style="background: rgba(255,255,255,0.02); padding: 12px 14px; border-radius: 8px; border-left: 3px solid var(--accent-blue);">
+              ${ins.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Renderização imediata para resposta instantânea ao clique
+    renderLeaderboard(DEFAULT_LEADERBOARD);
+
+    loadSummary();
+    loadRadar();
+    loadPortfolio();
+    loadTweets();
+    loadLeaderboard();
+  </script>
+</body>
+</html>

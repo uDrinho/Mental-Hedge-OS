@@ -1,0 +1,99 @@
+{
+  "version": "1.0.0",
+  "created_at": "2026-11-02",
+  "description": "Base de regras negativas e lições aprendidas a partir do backtest histórico (2025-2026). Consultada obrigatoriamente antes de qualquer trade hipotético.",
+  "hard_rules": [
+    {
+      "id": "RULE_NO_MINER_WITHOUT_HEDGE",
+      "category": "asset_restriction",
+      "target_assets": ["MARA", "RIOT", "WGMI", "CLSK", "CIFR"],
+      "action": "BLOCK_TRADE",
+      "reason": "Mineradoras sofreram drawdown de mais de 60% em nov/2025 devido à diluição acionária e custos de halving quando compradas a seco.",
+      "exception": "Permitido apenas se houver hedge vendido correspondente (short futuros BTC) com stop máximo de 8%."
+    },
+    {
+      "id": "RULE_NO_TRADE_ON_MERE_EXPECTATION",
+      "category": "state_machine",
+      "target_assets": ["ALL"],
+      "action": "BLOCK_TRADE",
+      "reason": "No backtest histórico, operações abertas na fase 'expectativa' ou 'zona_monitorar' tiveram taxa de acerto de apenas 48% a 61% (cara ou coroa).",
+      "requirement": "Exigir estritamente a fase 'gatilho_entrada' com estrutura gráfica de 3 ondas/absorção e confirmação técnica (onde o acerto sobe para 88,5%)."
+    },
+    {
+      "id": "RULE_ETH_PREREQUISITE_FOR_ALTS",
+      "category": "rotation_hierarchy",
+      "target_assets": ["ALTS", "SOL", "AVAX", "NEAR", "MEMES"],
+      "action": "RESTRICT_ALLOCATION",
+      "max_allocation_pct": 15,
+      "reason": "Alts sofrem sangria de liquidez contra o BTC durante correções. O transbordo de capital verdadeiro só acontece após o Ethereum romper sua máxima histórica.",
+      "requirement": "Manter no máximo 15% em alts selecionadas até que o ETH rompa o ATH confirmado em fechamento semanal."
+    },
+    {
+      "id": "RULE_MANDATORY_BREAKEVEN_AT_TARGET_1",
+      "category": "risk_management",
+      "target_assets": ["ALL"],
+      "action": "ADJUST_STOP",
+      "trigger_profit_pct": 5.0,
+      "reason": "O backtest revelou que operações tinham ganho máximo favorável médio de +14,2%, mas fechavam em -1,1% em 30 dias se o investidor não protegesse o lucro.",
+      "instruction": "Ao atingir +5% de lucro na posição, realizar 1/3 (33%) e mover o stop loss de todo o restante imediatamente para o preço de entrada (0 a 0)."
+    },
+    {
+      "id": "RULE_NEVER_SHORT_BLOWOFF",
+      "category": "trend_protection",
+      "target_assets": ["SPX", "NDX", "BTC"],
+      "action": "BLOCK_TRADE",
+      "reason": "Em movimentos parabólicos da Onda 5 (como S&P 500 acima de 7.400 e Nasdaq nos 30k em maio/2026), irracionalidade e dopamina não têm teto.",
+      "instruction": "Jamais abrir posições short contra um blow-off em aceleração vertical. Ficar 100% em caixa SGOV/T-Bills e esperar o topo duplo/reversão estruturada."
+    },
+    {
+      "id": "RULE_NO_SHORT_GEOPOLITICAL_SPIKE_WITHOUT_EXHAUSTION",
+      "category": "anomaly_protection",
+      "target_assets": ["WTI", "BRENT", "WTI/Brent"],
+      "action": "BLOCK_TRADE",
+      "reason": "No bloqueio do Estreito de Ormuz (mar/2026), o petróleo deu um salto de 5 sigmas (+30% intradiário). Tentar vender no meio do pânico gera perdas desnecessárias.",
+      "instruction": "Aguardar a exaustão do spike (fechamento de gap de imbalance e topo arredondado em $94-$106) antes de acionar a Mão 1 de 3 com alvo sub-$50."
+    },
+    {
+      "id": "RULE_MAX_ASYMMETRY_ON_RECORD_PUT_DELTA",
+      "category": "asymmetry_opportunity",
+      "target_assets": ["RUT", "SPX", "NDX"],
+      "action": "ALLOW_TACTICAL_BOUNCE",
+      "reason": "Quando o Put Delta atinge mínimas extremas como -$55 bilhões (mar/2026), a sobre-defesa institucional trava quedas adicionais e contrata repique violento.",
+      "instruction": "Autorizado arriscar um pouco mais na Mão 1 tática em ativos de suporte chave (ex: Russell 2000 em 2.466), ajustando breakeven no 0 a 0 aos +5%."
+    }
+  ],
+  "historical_autopsies": [
+    {
+      "trade_id": "AUTOPSY_20251104_MARA",
+      "asset": "MARA",
+      "date": "2025-11-04",
+      "direction": "long",
+      "outcome": "LOSS_61_PCT",
+      "lesson": "Entrada antecipada em rompimento fraco sem confirmação de volume. Ações de mineradoras não acompanham o BTC linearmente no topo de ciclo."
+    },
+    {
+      "trade_id": "AUTOPSY_20251121_ETH",
+      "asset": "ETH",
+      "date": "2025-11-21",
+      "direction": "long",
+      "outcome": "LOSS_43_PCT",
+      "lesson": "Tentativa de adivinhar fundo em $2.500 sem barra impulsiva de reversão. Preço continuou sangrando em cunha descendente."
+    },
+    {
+      "trade_id": "AUTOPSY_20260315_WTI_SQUEEZE",
+      "asset": "WTI",
+      "date": "2026-03-15",
+      "direction": "short",
+      "outcome": "SQUEEZE_5_SIGMAS",
+      "lesson": "Spikes geopolíticos não respeitam análise técnica de curto prazo. Só iniciar position short na mão 1 após a dissipação do ímpeto de manchetes."
+    },
+    {
+      "trade_id": "AUTOPSY_20260623_BTC_BREAKEVEN_SUCCESS",
+      "asset": "BTC",
+      "date": "2026-06-23",
+      "direction": "long",
+      "outcome": "PROFIT_PROTECTED_BREAKEVEN",
+      "lesson": "Rebote de $63k subiu até $67k (+11%). Realização de 25% com stop de breakeven no 0 a 0 salvou a carteira de devolver tudo no mergulho posterior para $52k."
+    }
+  ]
+}

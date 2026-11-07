@@ -1,0 +1,115 @@
+{
+  "date": "2026-11-07",
+  "generated_at": "07/11/2026 11:38",
+  "headline": "Briefing Macroeconômico — Mental Hedge Intelligence",
+  "market_snapshot": {
+    "BTC": {
+      "price": 75861.44,
+      "variation_pct": 0.15,
+      "variation_5d_pct": -3.05
+    },
+    "ETH": {
+      "price": 2243.16,
+      "variation_pct": 0.36,
+      "variation_5d_pct": -1.32
+    },
+    "SPX": {
+      "price": 7376.86,
+      "variation_pct": 0.31,
+      "variation_5d_pct": -4.45
+    },
+    "NDX": {
+      "price": 26989.99,
+      "variation_pct": 1.35,
+      "variation_5d_pct": -8.21
+    },
+    "RUT": {
+      "price": 2754.11,
+      "variation_pct": 0.89,
+      "variation_5d_pct": -3.68
+    },
+    "WTI": {
+      "price": 90.83,
+      "variation_pct": 0.34,
+      "variation_5d_pct": -12.76
+    },
+    "UST30Y": {
+      "price": 5.26,
+      "variation_pct": 0.17,
+      "variation_5d_pct": -1.29
+    },
+    "DXY": {
+      "price": 102.3,
+      "variation_pct": 0.74,
+      "variation_5d_pct": 0.41
+    },
+    "USDBRL": {
+      "price": 5.5,
+      "variation_pct": -0.14,
+      "variation_5d_pct": 2.81
+    }
+  },
+  "portfolio_status": {
+    "cash_usd": 20033.52,
+    "cash_brl": 50182.66,
+    "allocated_usd": 0,
+    "total_portfolio_usd": 20033.52,
+    "active_positions_count": 0,
+    "positions": [],
+    "recent_history": [],
+    "equity_curve": [
+      {
+        "id": 1,
+        "date": "2026-11-04",
+        "cash_usd": 20018.61,
+        "cash_brl": 50101.4,
+        "allocated_usd": 0.0,
+        "total_usd": 20018.61,
+        "daily_yield_usd": 11.170029811481777,
+        "daily_yield_brl": 60.86317276028879,
+        "notes": "Snapshot diário"
+      },
+      {
+        "id": 5,
+        "date": "2026-11-05",
+        "cash_usd": 20026.06,
+        "cash_brl": 50142.01,
+        "allocated_usd": 0.0,
+        "total_usd": 20026.06,
+        "daily_yield_usd": 7.450150858026969,
+        "daily_yield_brl": 40.61656878663034,
+        "notes": "Snapshot diário"
+      },
+      {
+        "id": 7,
+        "date": "2026-11-06",
+        "cash_usd": 20029.79,
+        "cash_brl": 50162.33,
+        "allocated_usd": 0.0,
+        "total_usd": 20029.79,
+        "daily_yield_usd": 3.726115110898526,
+        "daily_yield_brl": 20.320630477277998,
+        "notes": "Snapshot diário"
+      },
+      {
+        "id": 8,
+        "date": "2026-11-07",
+        "cash_usd": 20033.52,
+        "cash_brl": 50182.66,
+        "allocated_usd": 0.0,
+        "total_usd": 20033.52,
+        "daily_yield_usd": 3.7268084041104417,
+        "daily_yield_brl": 20.328865647530623,
+        "notes": "Snapshot diário"
+      }
+    ]
+  },
+  "insights_leigos": [
+    "💵 **Dólar Global Forte (DXY a 102.3, +0.41% em 5d)**\n• *O que aconteceu*: O índice do dólar mundial acelerou para cima nos últimos dias.\n• *Por que importa*: Confluência Estatística #2 provou que abrir compras em cripto com DXY subindo derruba o acerto para menos de 50% (o dólar forte age como um aspirador de liquidez global).\n• *O que fazer*: **TRAVA ATIVA: Proibido abrir novas compras (longs) em Cripto** enquanto o DXY não estabilizar.",
+    "🇺🇸 **Bolsas dos EUA em Fase Euforia (S&P 500: 7,377 | Nasdaq: 26,990)**\n• *O que aconteceu*: As bolsas americanas seguem esticadas no final de ciclo (Onda 5 parabólica).\n• *Por que importa*: Regra Canônica `RULE_NEVER_SHORT_BLOWOFF`. Irracionalidade de euforia não tem teto prévio; tentar shortear no meio da subida gera ruína.\n• *O que fazer*: **Manter 100% dos recursos fora de risco em SGOV**. Deixar a bolha inflar e aguardar topo duplo/reversão clara.",
+    "🛢️ **Petróleo WTI (US$ 90.83) — Zona de Resistência Macro**\n• *O que aconteceu*: O barril está na grande caixa de oferta entre US$ 95 e US$ 111.\n• *Por que importa*: Conforme nossa pesquisa macro, a tese secular do Mental Hedge aponta para alvos sub-US$ 50 e sub-US$ 30.\n• *O que fazer*: Manter o Position Short ativo em 1ª mão. Caso o preço perca o suporte imediato, adicionar a 2ª mão.",
+    "₿ **Criptoativos (BTC: US$ 75,861 | ETH: US$ 2,243)**\n• *O que aconteceu*: O Bitcoin consolida sua estrutura e o Ethereum negocia abaixo de US$ 4,957.\n• *Por que importa*: Regra `RULE_ETH_PREREQUISITE_FOR_ALTS`. O transbordo institucional genuíno para Altcoins só é liberado após o ETH romper sua máxima histórica.\n• *O que fazer*: **Manter no máximo 4% do patrimônio em alts táticas** (4 compras de 1% em compressão). Reservar os outros 80% em caixa SGOV.",
+    "🛡️ **Proteção Ativa de Capital (Anti-Ruína)**\n• *O que aconteceu*: Saldo total protegido em **US$ 20,033.52** (US$ 20,033.52 em SGOV e R$ 50,182.66 no Tesouro Selic).\n• *Por que importa*: Caixa remunerado em dólar e real não é dinheiro parado; é arma estratégica para comprar na capitulação quando todos estiverem em pânico.\n• *O que fazer*: Paciência absoluta. Seguir rendendo juros até os gatilhos confirmados de 3 mãos."
+  ],
+  "active_rules_count": 7
+}
