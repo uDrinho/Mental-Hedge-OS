@@ -11,30 +11,10 @@ import numpy as np
 
 sys.stdout.reconfigure(encoding="utf-8")
 BASE = Path(__file__).resolve().parent.parent
-DATA_DIR = Path(__file__).resolve().parent / "data"
+if str(BASE) not in sys.path:
+    sys.path.insert(0, str(BASE))
 
-# Mapa de normalização de ativos para os tickers do histórico
-ASSET_MAP = {
-    "BTC": "BTC",
-    "ETH": "ETH",
-    "SOL": "SOL",
-    "SPX": "SPX",
-    "NDX": "NDX",
-    "RUT": "RUT",
-    "IBOV": "IBOV",
-    "WTI/Brent": "WTI",
-    "WTI": "WTI",
-    "Brent": "BRENT",
-    "OURO": "OURO",
-    "PRATA": "PRATA",
-    "UST10Y": "UST10Y",
-    "UST30Y": "UST30Y",
-    "DXY": "DXY",
-    "USDBRL": "USDBRL",
-    "MARA": "MARA",
-    "RIOT": "RIOT",
-    "MSTR": "MSTR",
-}
+from core.config import BACKTEST_DATA_DIR as DATA_DIR, ASSET_MAP
 
 def load_history():
     df = pd.read_csv(DATA_DIR / "market_history.csv")

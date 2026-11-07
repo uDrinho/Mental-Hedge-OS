@@ -12,10 +12,9 @@ import json
 import datetime
 from pathlib import Path
 import pandas as pd
+from core.config import BASE_DIR, MEMORY_PATH, BACKTEST_DATA_DIR
 
-BASE_DIR = Path(__file__).resolve().parent
-MEMORY_PATH = BASE_DIR / "trade_learning_memory.json"
-BACKTEST_PATH = BASE_DIR / "backtest/data/backtest_results.csv"
+BACKTEST_PATH = BACKTEST_DATA_DIR / "backtest_results.csv"
 
 def load_memory():
     if MEMORY_PATH.exists():

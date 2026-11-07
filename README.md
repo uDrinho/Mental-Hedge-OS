@@ -69,19 +69,30 @@ Ao rodar o motor de avaliação (`backtest/run_backtest.py` e `backtest/mine_con
 ## Estrutura do Repositório
 
 ```text
+├── .agents/skills/                # Skills modulares com YAML frontmatter e runbooks de extração/auditoria
+│   ├── chart-ocr-transcriber/     # Diretrizes de leitura visual de gráficos do TradingView
+│   ├── macro-call-extractor/      # Extração estruturada em JSONL com validação Pydantic
+│   └── confluence-backtester/     # Auditoria quantitativa (Evals) e calibração de guardrails
+├── .github/workflows/ci.yml       # Pipeline de CI (validação de schemas, testes de guardrails e backtest)
 ├── backtest/
 │   ├── data/                      # Séries históricas (CSV) e resultados auditados do backtest
 │   ├── run_backtest.py            # Avaliador retrospectivo (janelas de 7d, 30d, 60d e drawdown)
 │   ├── mine_confluences.py        # Mineração do DNA de acertos vs erros (DXY, Yields, gatilhos verbais)
 │   └── RELATORIO_CONFLUENCIAS.md  # Documentação dos filtros estatísticos descobertos
+├── core/
+│   ├── config.py                  # Constantes canônicas, parâmetros anti-ruína e mapas de tickers
+│   └── schemas.py                 # Modelos Pydantic v2 (OperationalCall, ThesisAdvisoryReport, LeaderboardEntry)
 ├── playbook/
 │   ├── calls/                     # 13 meses de chamadas operacionais estruturadas (.jsonl)
 │   ├── notes/                     # Sínteses mensais extraídas com citação de IDs (.md)
 │   ├── EXTRACTION_GUIDE.md        # Contrato de prompt e regras anti-alucinação dos subagentes
 │   └── PLAYBOOK_MENTAL_HEDGE.md   # Consolidação da máquina de estados e hierarquia de liquidez
+├── tests/
+│   └── test_engine.py             # Testes automatizados dos 472 schemas JSONL, guardrails e leaderboard
 ├── web_platform/
 │   ├── server.py                  # API FastAPI (/api/summary, /api/advisory, /api/leaderboard, /api/portfolio)
 │   └── static/index.html          # Interface web (Leaderboard, Consultor de Risco, Kanban e Paper Trading)
+├── AGENTS.md                      # Documentação técnica e diretrizes para operação de agentes de IA
 ├── daily_agent.py                 # Agente diário (coleta cotações, avalia stops e gera briefing sem economês)
 ├── paper_trader.py                # Simulador de carteira em SQLite (gestão em 3 mãos e caixa SGOV/Selic)
 ├── risk_advisor.py                # Motor de scoring em 4 pilares e gerador de setups defensivos

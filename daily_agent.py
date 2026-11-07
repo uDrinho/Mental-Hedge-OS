@@ -19,25 +19,10 @@ from paper_trader import (
     evaluate_breakeven_and_exits
 )
 from telegram_notifier import broadcast_daily_briefing, send_telegram_message
+from core.config import BASE_DIR, MEMORY_PATH, BRIEFING_PATH as BRIEFING_OUT, TICKERS_WATCH, ETH_ATH_USD
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
-
-BASE_DIR = Path(__file__).resolve().parent
-MEMORY_PATH = BASE_DIR / "trade_learning_memory.json"
-BRIEFING_OUT = BASE_DIR / "daily_briefing.json"
-
-TICKERS_WATCH = {
-    "BTC": "BTC-USD",
-    "ETH": "ETH-USD",
-    "SPX": "^GSPC",
-    "NDX": "^NDX",
-    "RUT": "^RUT",
-    "WTI": "CL=F",
-    "UST30Y": "^TYX",
-    "DXY": "DX-Y.NYB",
-    "USDBRL": "USDBRL=X"
-}
 
 def load_learning_rules():
     if MEMORY_PATH.exists():
